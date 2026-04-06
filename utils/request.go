@@ -1,18 +1,21 @@
 package utils
 
 import (
-	 "bytes"
-		"encoding/json"
-		"fmt"
-		"net/http"
-		"time"
+	"fmt"
+	"net/http"
+	"net/url"
+	"strings"
+	"time"
 )
 
 // Utility function to make Post Requests a lot easier. 
 func RequestPost(requestUrl string, requestBody map[string]string) (*http.Response, error) {
-	jsonData, _ := json.Marshal(requestBody)
+	formData := url.Values{}
+	for key, value := range requestBody {
+		formData.Set(key, value)
+	}
 
-	resp, err := http.Post(requestUrl, "application/json", bytes.NewBuffer(jsonData))
+	resp, err := http.Post(requestUrl, "application/x-www-form-urlencoded", strings.NewReader(formData.Encode()))
 
 	if err != nil {
 		fmt.Println("Error:", err)
