@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"spotify-activity-tracker/utils"
 )
 
 func main () { 
@@ -12,6 +13,15 @@ func main () {
 		c.JSON(200, gin.H {
 			"body": "pong",
 		})
+	})
+
+	router.GET("/last-listened", func(c *gin.Context) {
+		track, err := utils.GetLastListened()
+		if err != nil {
+			c.JSON(500, gin.H{"error": err.Error()})
+			return
+		}
+		c.JSON(200, track)
 	})
 
 	router.Run()
