@@ -13,9 +13,21 @@ type Artist struct {
 	Name string `json:"name"`
 }
 
+type AlbumImage struct {
+	URL    string `json:"url"`
+	Height int    `json:"height"`
+	Width  int    `json:"width"`
+}
+
+type Album struct {
+	Name   string       `json:"name"`
+	Images []AlbumImage `json:"images"`
+}
+
 type Track struct {
 	Name    string   `json:"name"`
 	Artists []Artist `json:"artists"`
+	Album   Album    `json:"album"`
 }
 
 type RecentlyPlayedItem struct {
