@@ -11,12 +11,10 @@ import (
 var authLogger *log.Logger
 
 func init() {
-	err := godotenv.Load()
-
 	authLogger = log.New(os.Stdout, "[AUTH] ", log.LstdFlags)
 
-	if err != nil {
-		authLogger.Fatalf("Error loading .env: %v", err)
+	if err := godotenv.Load(); err != nil {
+		authLogger.Println("No .env file found, using environment variables")
 	}
 }
 
