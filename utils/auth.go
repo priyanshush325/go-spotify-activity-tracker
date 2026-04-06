@@ -8,15 +8,15 @@ import (
 	"encoding/json"
 )
 
-var logger *log.Logger
+var authLogger *log.Logger
 
 func init() {
 	err := godotenv.Load()
 
-	logger = log.New(os.Stdout, "[AUTH] ", log.LstdFlags)
+	authLogger = log.New(os.Stdout, "[AUTH] ", log.LstdFlags)
 
 	if err != nil {
-		logger.Fatalf("Error loading .env: %v", err)
+		authLogger.Fatalf("Error loading .env: %v", err)
 	}
 }
 
@@ -25,23 +25,23 @@ func refreshAccessToken() (string, error) {
 	requestBody := map[string]string {
 		"grant_type": "refresh_token",
 		"refresh_token": os.Getenv("SPOTIFY_REFRESH_TOKEN"),
-		"client_id": os.Getenv("SPOTIFY_CLIENT_ID"),
-		"client_secret": os.Getenv("SPOTIFY_CLIENT_SECRET"),
+		"client_id": os.Getenv("CLIENT_ID"),
+		"client_secret": os.Getenv("CLIENT_SECRET"),
 	}
 
-	logger.Println("Refreshing Spotify Access Token")
+	authLogger.Println("Refreshing Spotify Access Token")
 
 	resp, err := RequestPost("https://accounts.spotify.com/api/token", requestBody)
 
 	if err != nil {
-		logger.Println("Error Refreshing Access Token: %v", err)
+		authLogger.Println("Error Refreshing Access Token: %v", err)
 		return "", err
 	}
 
 	responseBody, err := io.ReadAll(resp.Body)
 
 	if err != nil {
-		logger.Println("Error reading refresh response body: %v", err)
+		authLogger.Println("Error reading refresh response body: %v", err)
 		return "", err
 	}
 
