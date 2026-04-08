@@ -75,6 +75,22 @@ func GetLastListened () (Track, error){
 	}
 	defer resp.Body.Close()
 
+	// If the authorization token has expired, refresh the token and retry once.
+	if resp.StatusCode == 401 {
+		spotifyLogger.Println("Access token expired, refreshing and retrying")
+		accessToken, err = refreshAccessToken()
+		if err != nil {
+			spotifyLogger.Println("Error refreshing Access Token: %v", err)
+			return Track{}, err
+		}
+		headers["Authorization"] = "Bearer " + accessToken
+		resp, err = RequestGet("https://api.spotify.com/v1/me/player/recently-played?limit=1", headers)
+		if err != nil {
+			spotifyLogger.Println("Error requesting last played song after token refresh: %v", err)
+			return Track{}, err
+		}
+	}
+
 	responseBody, err := io.ReadAll(resp.Body)
 
 	if err != nil {
